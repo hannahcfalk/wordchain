@@ -1,6 +1,12 @@
-<h2>Log In</h2>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
+
+<h1>WORD CHAIN</h1>
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Log In</button>
 </form>
+<h4>Don't have an account?</h4>
+<a href="{% url 'wordchain:sign_up' %}">Sign up here</a>
+<a href="">Forgot password?</a>
