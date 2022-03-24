@@ -2,6 +2,9 @@
 /shelf/
 /workspace.xml
 
+../.env
+
+
 # Django ignores
 __pycache__
 db.sqlite3
