@@ -1,0 +1,16 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# Default ignored files (from .idea)
+/shelf/
+/workspace.xml
+
+../.env
+
+# IntelliJ configurations
+.idea/
