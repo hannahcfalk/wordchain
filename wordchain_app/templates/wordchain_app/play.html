@@ -13,15 +13,20 @@
             <h1>Word Chain</h1>
         </div>
         <div class="score-container">
-            <h4>Score:</h4>
+            <p id="score">Score: 0</p>
+        </div>
+        <div class="modal" id="game-modal">
+            <div class="modal-content"></div>
         </div>
         <div class="message-container"></div>
         <div class="tile-container"></div>
     </div>
     <div class="button-container">
-        <button class="bottom-button" name="home">Home</button>
-        <button class="bottom-button" name="clear">Clear</button>
-        <button class="bottom-button" name="check">Check</button>
+        <a href="{% url 'wordchain:home' %}">
+            <button class="bottom-button" name="home" id="home">Home</button>
+        </a>
+        <button class="bottom-button" name="clear" id="clear">Clear</button>
+        <button class="bottom-button" name="check" id="check">Check</button>
     </div>
     <script type="text/javascript" src="{% static 'wordchain_app/game.js' %}"></script>
 </body>
