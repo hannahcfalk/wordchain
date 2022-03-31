@@ -84,25 +84,25 @@ WSGI_APPLICATION = 'wordchain.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 }
 
+# NOTE
+# Before deploying, uncomment this and ensure that the above is commented out
 
-# If the flag as been set, configure to use proxy
-if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
-    DATABASES['default'] = {
-        'HOST': '/cloudsql/cs4750-wordchain:us-east4:wordchaindb',
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wordchain-django',
-        'USER': 'cs4750',
-        'PASSWORD': 'cs4750',
-        # For MySQL, set 'PORT': '3306' instead of the following. Any Cloud
-        # SQL Proxy instances running locally must also be set to tcp:3306.
-        'PORT': '3306',
-    }
+# DATABASES = {
+#     'default': {
+#         'HOST': '/cloudsql/cs4750-wordchain:us-east4:wordchaindb',
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'wordchain-django',
+#         'USER': 'cs4750',
+#         'PASSWORD': 'cs4750',
+#         # For MySQL, set 'PORT': '3306' instead of the following. Any Cloud
+#         # SQL Proxy instances running locally must also be set to tcp:3306.
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation
