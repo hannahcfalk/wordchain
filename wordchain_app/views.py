@@ -19,10 +19,12 @@ def sign_up(request):
         form = UserForm()
     return render(request, "registration/sign_up.html", {'form': form})
 
+
 def password_reset(request):
     return render(request, "wordchain_app/password_reset.html")
 
 
+@login_required
 def update_account_details(request):
 
     if request.method == 'POST':
@@ -34,5 +36,7 @@ def update_account_details(request):
         form = UserForm(instance=request.user)
     return render(request, "wordchain_app/update_account_details.html", {'form': form})
 
+
+@login_required
 def play(request):
     return render(request, "wordchain_app/play.html")
