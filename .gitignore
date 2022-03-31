@@ -14,3 +14,7 @@ media
 
 # IntelliJ configurations
 .idea/
+
+# Ignore google-cloud-sdk used for Google CLI
+folder_to_ignore/
+diegoenv/

@@ -12,8 +12,9 @@ const scoreDisplay = document.querySelector(".score-container")
 const modalDisplay = document.getElementById("game-modal")
 const modalContent = document.querySelector(".modal-content")
 
-// Test answer key
+// Test answer key and level
 test_answer_key = ['TRAIN', 'TRACK', 'TEAM', 'BUILDING', 'BLOCK', 'HEAD']
+level = 1
 
 // Tile layout
 const guessRows = [
@@ -31,8 +32,11 @@ let perfect_guess_score = 10
 let incorrect_penalty = 1
 let possible_points = perfect_guess_score
 let currentRow = 1
-let currentTile = 0
+let currentTile = 1
 let isGameOver = false
+let hintTile = 0
+
+
 
 // Create each of the tiles
 guessRows.forEach((guessRow, guessRowIndex) => {
@@ -93,7 +97,7 @@ const addLetter = (letter) => {
 
 // Delete letter when backspace pressed on keyboard
 const deleteLetter = () => {
-    if (currentTile > 0) {
+    if (currentTile > 0 && currentTile > hintTile) {
         currentTile--
         const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile)
         tile.textContent = ''
@@ -216,25 +220,19 @@ const createModalMessage = (checkRowMessage) => {
 const createModalButtons = () => {
     let firstWord = test_answer_key[0]
     let sixthWord = test_answer_key[1]
-    const modalButton1 = document.createElement('button')
-    const modalButton2 = document.createElement('button')
-    modalButton1.innerHTML = "Below " + firstWord
-    modalButton2.innerHTML = "Above " + sixthWord
-    modalButton1.classList.add('modal-button')
-    modalButton2.classList.add('modal-button')
-    modalContent.append(modalButton1)
-    modalContent.append(modalButton2)
+    const modalButton = document.createElement('button')
+    modalButton.innerHTML = "Below " + firstWord
+    modalButton.classList.add('modal-button')
+    modalContent.append(modalButton)
 }
 
-/*
-each wrong guess gets option from bottom or top
-can work towards
-
-only answer through row that got most recent letter
-
-if get all guesses wrong, gameover
-
-
-
-
-*/
+const addHint = (row, tile) => {
+    letter = test_answer_key[row][tile]
+    //alert(letter)
+    const hTile = document.getElementById('guessRow-' + row + '-tile-' + tile)
+    hTile.textContent = letter
+    guessRows[row][tile] = letter
+    hTile.setAttribute('data', letter)
+    hintTile++
+}
+addHint(1, 0)
