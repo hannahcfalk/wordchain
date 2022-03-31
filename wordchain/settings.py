@@ -80,29 +80,29 @@ WSGI_APPLICATION = 'wordchain.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
+# Database
+# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
+
 DATABASES = {
     'default': {
-        # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
-        # 'ENGINE': 'django.db.backends.mysql' instead of the following.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+
+# If the flag as been set, configure to use proxy
+if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
+    DATABASES['default'] = {
+        'HOST': '/cloudsql/cs4750-wordchain:us-east4:wordchaindb',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wordchaindb',
+        'NAME': 'wordchain-django',
         'USER': 'cs4750',
+        'PASSWORD': 'cs4750',
         # For MySQL, set 'PORT': '3306' instead of the following. Any Cloud
         # SQL Proxy instances running locally must also be set to tcp:3306.
         'PORT': '3306',
     }
-}
-# In the flexible environment, you connect to CloudSQL using a unix socket.
-# Locally, you can use the CloudSQL proxy to proxy a localhost connection
-# to the instance
-DATABASES['default']['HOST'] = '/cloudsql/cs4750-wordchain:us-east4:wordchaindb'
-if os.getenv('GAE_INSTANCE'):
-    DATABASES['default']['PASSWORD'] = 'cs4750'
-else:
-    DATABASES['default']['NAME'] = 'hannah'
-    DATABASES['default']['USER'] = 'root'
-    DATABASES['default']['HOST'] = 'localhost' # DB's IP address
-
 
 
 # Password validation
@@ -139,7 +139,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_ROOT = "static"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
