@@ -24,6 +24,7 @@ SECRET_KEY = 'django-insecure-y=s_p%@mbkga2l6_mkfs0t+)#!oxd8*ihf*vj#5i8(goyi$$uw
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+LOCAL = False   # SET TO FALSE BEFORE DEPLOYING
 
 ALLOWED_HOSTS = ['*']
 
@@ -83,26 +84,27 @@ WSGI_APPLICATION = 'wordchain.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-}
+if LOCAL:
+    DATABASES = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 
 # NOTE
 # Before deploying, uncomment this and ensure that the above is commented out
-
-# DATABASES = {
-#     'default': {
-#         'HOST': '/cloudsql/cs4750-wordchain:us-east4:wordchaindb',
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'wordchain-django',
-#         'USER': 'cs4750',
-#         'PASSWORD': 'cs4750',
-#         # For MySQL, set 'PORT': '3306' instead of the following. Any Cloud
-#         # SQL Proxy instances running locally must also be set to tcp:3306.
-#         'PORT': '3306',
-#     }
-# }
+else:
+    DATABASES = {
+        'default': {
+            'HOST': '/cloudsql/cs4750-wordchain:us-east4:wordchaindb',
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'wordchain-django',
+            'USER': 'cs4750',
+            'PASSWORD': 'cs4750',
+            # For MySQL, set 'PORT': '3306' instead of the following. Any Cloud
+            # SQL Proxy instances running locally must also be set to tcp:3306.
+            'PORT': '3306',
+        }
+    }
 
 
 # Password validation
