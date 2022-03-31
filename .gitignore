@@ -18,3 +18,7 @@ media
 # Ignore google-cloud-sdk used for Google CLI
 folder_to_ignore/
 diegoenv/
+word-chain-env/
+
+static/
+staticfiles/

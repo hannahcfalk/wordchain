@@ -96,14 +96,13 @@ if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
     DATABASES['default'] = {
         'HOST': '/cloudsql/cs4750-wordchain:us-east4:wordchaindb',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wordchaindb',
+        'NAME': 'wordchain-django',
         'USER': 'cs4750',
         'PASSWORD': 'cs4750',
         # For MySQL, set 'PORT': '3306' instead of the following. Any Cloud
         # SQL Proxy instances running locally must also be set to tcp:3306.
         'PORT': '3306',
     }
-
 
 
 # Password validation
@@ -140,7 +139,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_ROOT = "static"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
 
-from .forms import SignUpForm
+from .forms import UserForm
 
 @login_required
 def home(request):
@@ -10,20 +10,29 @@ def home(request):
 
 def sign_up(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = UserForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('wordchain:home')
 
     else:
-        form = SignUpForm()
+        form = UserForm()
     return render(request, "registration/sign_up.html", {'form': form})
 
 def password_reset(request):
     return render(request, "wordchain_app/password_reset.html")
 
+
 def update_account_details(request):
-    return render(request, "wordchain_app/update_account_details.html")
+
+    if request.method == 'POST':
+        form = UserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('wordchain:home')
+    else:
+        form = UserForm(instance=request.user)
+    return render(request, "wordchain_app/update_account_details.html", {'form': form})
 
 def play(request):
     return render(request, "wordchain_app/play.html")
