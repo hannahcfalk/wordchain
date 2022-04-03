@@ -71,7 +71,6 @@ const addStartingWord = (index) => {
 addStartingWord(0)
 addStartingWord(5)
 
-
 // Add key listener to page
 document.addEventListener('keydown', function (e) {
     if(!isGameOver){
@@ -277,6 +276,7 @@ const newGame = () => {
     clearTiles()
 }
 
+// Clear tiles
 const clearTiles = () => {
     hintTile = 0
     for (let i = 0; i < guessRows.length; i++){
