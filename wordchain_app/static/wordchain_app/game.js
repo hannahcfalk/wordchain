@@ -29,13 +29,13 @@ const guessRows = [
 // Variables
 let score = 0
 let perfect_guess_score = 0
-if(level == 1){
-    perfect_guess_score = 10 
-}else if(level == 2){
+if (level == 1) {
+    perfect_guess_score = 10
+} else if (level == 2) {
     perfect_guess_score = 20
-}else if (level == 3){
+} else if (level == 3) {
     perfect_guess_score = 20
-}else{
+} else {
     perfect_guess_score = 0
 }
 let incorrect_penalty = 1
@@ -60,7 +60,7 @@ guessRows.forEach((guessRow, guessRowIndex) => {
 
 // Add starting words
 const addStartingWord = (index) => {
-    for (let i = 0; i < test_answer_key[index].length; i++){
+    for (let i = 0; i < test_answer_key[index].length; i++) {
         const tile = document.getElementById('guessRow-' + index + '-tile-' + i)
         const letter = test_answer_key[index][i]
         tile.textContent = letter
@@ -73,17 +73,17 @@ addStartingWord(5)
 
 // Add key listener to page
 document.addEventListener('keydown', function (e) {
-    if(!isGameOver){
+    if (!isGameOver) {
         if ((e.key).match('^[a-z]{1}$')) {
             addLetter(e.key.toUpperCase())
         }
-        if((e.key).match('^Backspace{1}$')){
+        if ((e.key).match('^Backspace{1}$')) {
             addLetter(e.key)
         }
-        if((e.key).match('^Enter{1}$')){
-            if(modalDisplay.style.display == 'block'){
+        if ((e.key).match('^Enter{1}$')) {
+            if (modalDisplay.style.display == 'block') {
                 closeModalFunction()
-            }else{
+            } else {
                 checkRow()
             }
         }
@@ -94,9 +94,9 @@ document.addEventListener('keydown', function (e) {
 const addLetter = (letter) => {
     if (currentTile < 13 && currentRow < 6) {
         const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile)
-        if (letter == 'Backspace'){
+        if (letter == 'Backspace') {
             deleteLetter()
-        }else{
+        } else {
             tile.textContent = letter
             guessRows[currentRow][currentTile] = letter
             tile.setAttribute('data', letter)
@@ -142,13 +142,13 @@ const shakeTile = () => {
         setTimeout(() => {
             tile.classList.remove('shake')
         }, 50)
-    })    
+    })
 }
 
 // Check button
 checkButton.addEventListener('click', () => handleCheckClick())
 const handleCheckClick = () => {
-    if(!isGameOver){
+    if (!isGameOver) {
         checkRow()
     }
 }
@@ -156,45 +156,45 @@ const handleCheckClick = () => {
 // Checks current row
 const checkRow = () => {
     const guess = guessRows[currentRow].join('')
-    if(guess != test_answer_key[currentRow]){
-        if(possible_points != 0){
+    if (guess != test_answer_key[currentRow]) {
+        if (possible_points != 0) {
             possible_points -= incorrect_penalty
         }
         shakeTile()
-        if(hintTile == test_answer_key[currentRow].length - 1){
+        if (hintTile == test_answer_key[currentRow].length - 1) {
             isGameOver = true
             score += possible_points
-            possible_points = perfect_guess_score 
-            updateScore(score) 
+            possible_points = perfect_guess_score
+            updateScore(score)
             createModalMessage('Game over! Your score is: ' + score)
-            createModalButtons('PLAY AGAIN', newGame)  
-            modalDisplay.style.display = 'block'   
-            return          
-        }else{
-            createModalMessage('Nice try! The next letter of the word is "' + test_answer_key[currentRow][hintTile] +'"')
+            createModalButtons('PLAY AGAIN', newGame)
+            modalDisplay.style.display = 'block'
+            return
+        } else {
+            createModalMessage('Nice try! The next letter of the word is "' + test_answer_key[currentRow][hintTile] + '"')
             createModalButtons('OK', closeModalFunction)
             modalDisplay.style.display = 'block'
             addHint(currentRow, hintTile)
             clearRow(currentRow)
             currentTile = hintTile
         }
-    }else{
+    } else {
         flipTile()
-        if(currentRow == 4){
+        if (currentRow == 4) {
             isGameOver = true
             score += possible_points
-            possible_points = perfect_guess_score 
-            updateScore(score) 
+            possible_points = perfect_guess_score
+            updateScore(score)
             createModalMessage('Nice work! Your score is: ' + score)
-            createModalButtons('PLAY AGAIN', newGame)  
-            modalDisplay.style.display = 'block'       
+            createModalButtons('PLAY AGAIN', newGame)
+            modalDisplay.style.display = 'block'
             return
-        }else{
+        } else {
             currentRow++
             currentTile = 1
             score += possible_points
             hintTile = 0
-            createModalMessage('Nice job! The next word starts with "' + test_answer_key[currentRow][hintTile] +'"')
+            createModalMessage('Nice job! The next word starts with "' + test_answer_key[currentRow][hintTile] + '"')
             createModalButtons('OK', closeModalFunction)
             modalDisplay.style.display = 'block'
             addHint(currentRow, hintTile)
@@ -217,19 +217,19 @@ addHint(1, 0)
 // Clear button
 clearButton.addEventListener('click', () => handleClearClick())
 const handleClearClick = () => {
-    if(!isGameOver){
+    if (!isGameOver) {
         clearRow(currentRow)
     }
 }
 
 // Clear row
 const clearRow = (index) => {
-    for (let i = hintTile; i < guessRows[index].length; i++){
+    for (let i = hintTile; i < guessRows[index].length; i++) {
         const tile = document.getElementById('guessRow-' + index + '-tile-' + i)
         tile.textContent = ''
         guessRows[index][i] = ''
         tile.setAttribute('data', '')
-    }  
+    }
     currentTile = 0
 }
 
@@ -279,7 +279,7 @@ const newGame = () => {
 // Clear tiles
 const clearTiles = () => {
     hintTile = 0
-    for (let i = 0; i < guessRows.length; i++){
+    for (let i = 0; i < guessRows.length; i++) {
         clearRow(i)
     }
 }
