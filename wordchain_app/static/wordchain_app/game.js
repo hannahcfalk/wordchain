@@ -272,6 +272,7 @@ const closeModalFunction = () => {
 // Get new chain
 // Clear out tiles
 const newGame = () => {
+    updateScore(0)
     closeModalFunction()
     clearTiles()
 }
