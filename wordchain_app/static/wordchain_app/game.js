@@ -1,39 +1,19 @@
+// Reference: https://github.com/kubowania/wordle-javascript
+// https://www.youtube.com/watch?v=mpby4HiElek
+// https://www.youtube.com/watch?v=j7OhcuZQ-q8
+
 // Get HTML classes
 const tileDisplay = document.querySelector('.tile-container')
-const keyboard = document.querySelector('.key-container')
 const messageDisplay = document.querySelector('.message-container')
+const playButton = document.getElementById("play")
+const clearButton = document.getElementById("clear")
+const checkButton = document.getElementById("check")
+const scoreDisplay = document.querySelector(".score-container")
+const modalDisplay = document.getElementById("game-modal")
+const modalContent = document.querySelector(".modal-content")
 
-// Letters
-const keys = [
-    'Q',
-    'W',
-    'E',
-    'R',
-    'T',
-    'Y',
-    'U',
-    'I',
-    'O',
-    'P',
-    'A',
-    'S',
-    'D',
-    'F',
-    'G',
-    'H',
-    'J',
-    'K',
-    'L',
-    'ENTER',
-    'Z',
-    'X',
-    'C',
-    'V',
-    'B',
-    'N',
-    'M',
-    '«',
-]
+// Test answer key
+test_answer_key = ['TRAIN', 'TRACK', 'TEAM', 'BUILDING', 'BLOCK', 'HEAD']
 
 // Tile layout
 const guessRows = [
@@ -46,7 +26,11 @@ const guessRows = [
 ]
 
 // Variables
-let currentRow = 0
+let score = 0
+let perfect_guess_score = 10
+let incorrect_penalty = 1
+let possible_points = perfect_guess_score
+let currentRow = 1
 let currentTile = 0
 let isGameOver = false
 
@@ -63,38 +47,47 @@ guessRows.forEach((guessRow, guessRowIndex) => {
     tileDisplay.append(rowElement)
 })
 
-// Create a keyboard
-keys.forEach(key => {
-    const buttonElement = document.createElement('button')
-    buttonElement.textContent = key
-    buttonElement.setAttribute('id', key)
-    buttonElement.addEventListener('click', () => handleClick(key))
-    keyboard.append(buttonElement)
-})
-
-// Handle clicking the keyboard
-const handleClick = (letter) => {
-    if (!isGameOver) {
-        if (letter === '«') {
-            deleteLetter()
-            return
-        }
-        if (letter === 'ENTER') {
-            checkRow()
-            return
-        }
-        addLetter(letter)
+// Add starting words
+const addStartingWord = (index) => {
+    for (let i = 0; i < test_answer_key[index].length; i++){
+        const tile = document.getElementById('guessRow-' + index + '-tile-' + i)
+        let letter = test_answer_key[index][i]
+        tile.textContent = letter
+        guessRows[index][i] = letter
+        tile.setAttribute('data', letter)
     }
 }
+addStartingWord(0)
+addStartingWord(5)
+
+
+// Add key listener to page (only trigger if letter or backspace or enter)
+document.addEventListener('keydown', function (e) {
+    if(!isGameOver){
+        if ((e.key).match('^[a-z]{1}$')) {
+            addLetter(e.key.toUpperCase())
+        }
+        if((e.key).match('^Backspace{1}$')){
+            addLetter(e.key)
+        }
+        if((e.key).match('^Enter{1}$')){
+            checkRow()
+        }
+    }
+})
 
 // Display letter in tile layout
 const addLetter = (letter) => {
-    if (currentTile < 5 && currentRow < 6) {
+    if (currentTile < 13 && currentRow < 6) {
         const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile)
-        tile.textContent = letter
-        guessRows[currentRow][currentTile] = letter
-        tile.setAttribute('data', letter)
-        currentTile++
+        if (letter == 'Backspace'){
+            deleteLetter()
+        }else{
+            tile.textContent = letter
+            guessRows[currentRow][currentTile] = letter
+            tile.setAttribute('data', letter)
+            currentTile++
+        }
     }
 }
 
@@ -109,38 +102,6 @@ const deleteLetter = () => {
     }
 }
 
-// Check row for correctness
-const checkRow = () => {
-    const guess = guessRows[currentRow].join('')
-    if (currentTile > 4) {
-        fetch(`http://localhost:8000/check/?word=${guess}`)
-            .then(response => response.json())
-            .then(json => {
-                if (json == 'Entry word not found') {
-                    showMessage('word not in list')
-                    return
-                } else {
-                    flipTile()
-                    if (wordle == guess) {
-                        showMessage('Magnificent!')
-                        isGameOver = true
-                        return
-                    } else {
-                        if (currentRow >= 5) {
-                            isGameOver = true
-                            showMessage('Game Over')
-                            return
-                        }
-                        if (currentRow < 5) {
-                            currentRow++
-                            currentTile = 0
-                        }
-                    }
-                }
-            }).catch(err => console.log(err))
-    }
-}
-
 // Display message
 const showMessage = (message) => {
     const messageElement = document.createElement('p')
@@ -149,41 +110,131 @@ const showMessage = (message) => {
     setTimeout(() => messageDisplay.removeChild(messageElement), 2000)
 }
 
-// Add color to letter for future repeated usage of letter
-const addColorToKey = (keyLetter, color) => {
-    const key = document.getElementById(keyLetter)
-    key.classList.add(color)
-}
-
 // Flip tiles when answer entered
-const flipTile = () => {
+const flipTile = (answer) => {
     const rowTiles = document.querySelector('#guessRow-' + currentRow).childNodes
-    let checkWordle = wordle
+    let checkAnswer = answer
     const guess = []
-
-    rowTiles.forEach(tile => {
-        guess.push({letter: tile.getAttribute('data'), color: 'grey-overlay'})
-    })
-
-    guess.forEach((guess, index) => {
-        if (guess.letter == wordle[index]) {
-            guess.color = 'green-overlay'
-            checkWordle = checkWordle.replace(guess.letter, '')
-        }
-    })
-
-    guess.forEach(guess => {
-        if (checkWordle.includes(guess.letter)) {
-            guess.color = 'yellow-overlay'
-            checkWordle = checkWordle.replace(guess.letter, '')
-        }
-    })
 
     rowTiles.forEach((tile, index) => {
         setTimeout(() => {
             tile.classList.add('flip')
-            tile.classList.add(guess[index].color)
-            addColorToKey(guess[index].letter, guess[index].color)
-        }, 500 * index)
+        }, 50 * index)
     })
 }
+
+// Shake tiles when answer entered
+const shakeTile = (answer) => {
+    const rowTiles = document.querySelector('#guessRow-' + currentRow).childNodes
+    let checkAnswer = answer
+    const guess = []
+
+    rowTiles.forEach((tile, index) => {
+        tile.classList.add('shake')
+        setTimeout(() => {
+            tile.classList.remove('shake')
+        }, 50)
+    })    
+}
+
+// Clickable check button
+checkButton.addEventListener('click', () => handleCheckClick())
+const handleCheckClick = () => {
+    if(!isGameOver){
+        checkRow()
+    }
+}
+
+// Checks current row
+const checkRow = () => {
+    const guess = guessRows[currentRow].join('')
+    if(guess == test_answer_key[currentRow]){
+        flipTile(test_answer_key[currentRow])
+        showMessage('Word Correct!')
+        // createModalMessage('Correct! Where do you want your next letter?')
+        // createModalButtons()
+        // modalDisplay.style.display = 'block'
+        currentRow++
+        currentTile = 0
+        score += possible_points
+        updateScore(score)
+        possible_points = perfect_guess_score
+    }else{
+        if(possible_points != 0){
+            possible_points -= incorrect_penalty
+        }
+        shakeTile(test_answer_key[currentRow])
+        showMessage('Incorrect!')
+        // clearRow(currentRow)
+        // createModalMessage('Incorrect! Where do you want your next letter?')
+        // createModalButtons()
+        // modalDisplay.style.display = 'block'
+    }
+    if(currentRow == 5){
+        isGameOver = true
+        showMessage('Game over!')
+        // createModalMessage('Game over! Your score was ' + score)
+        // modalDisplay.style.display = 'block'
+        return
+    }
+}
+
+// Clear button
+clearButton.addEventListener('click', () => handleClearClick())
+const handleClearClick = () => {
+    if(!isGameOver){
+        clearRow(currentRow)
+    }
+}
+
+// Clear row
+const clearRow = (index) => {
+    for (let i = 0; i < guessRows[index].length; i++){
+        const tile = document.getElementById('guessRow-' + index + '-tile-' + i)
+        tile.textContent = ''
+        guessRows[index][i] = ''
+        tile.setAttribute('data', '')
+    }  
+    currentTile = 0
+}
+
+// Updates score
+// Cool feature: a +[score increase] that fades
+const updateScore = (updated_score) => {
+    const score = document.getElementById('score')
+    score.innerHTML = "Score: " + updated_score
+}
+
+// Modal message
+const createModalMessage = (checkRowMessage) => {
+    const modalElement = document.createElement('p')
+    modalElement.textContent = checkRowMessage
+    modalContent.append(modalElement)
+}
+
+// Modal buttons
+const createModalButtons = () => {
+    let firstWord = test_answer_key[0]
+    let sixthWord = test_answer_key[1]
+    const modalButton1 = document.createElement('button')
+    const modalButton2 = document.createElement('button')
+    modalButton1.innerHTML = "Below " + firstWord
+    modalButton2.innerHTML = "Above " + sixthWord
+    modalButton1.classList.add('modal-button')
+    modalButton2.classList.add('modal-button')
+    modalContent.append(modalButton1)
+    modalContent.append(modalButton2)
+}
+
+/*
+each wrong guess gets option from bottom or top
+can work towards
+
+only answer through row that got most recent letter
+
+if get all guesses wrong, gameover
+
+
+
+
+*/

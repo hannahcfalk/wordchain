@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,24 +9,20 @@
 </head>
 
 <body>
+    <ul class="navbar">
+        <li><a href="{% url 'wordchain:play' %}">Play</a></li>
+        <li><a>Settings</a></li>
+        <li><a>Account</a></li>
+        <li><a href="{% url 'wordchain:about' %}"> About</a></li>
+        <li style="float:right"><a href="/accounts/logout/">Log Out</a></li>
+    </ul>
     <div class="game-container">
     <div class="title-container">
         <h1>Word Chain</h1>
     </div>
-    <div>
-      <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="button4" type="submit">Log In</button>
-      </form>
-      <div class="signup-container">
-      <h4>Don't have an account?</h4>
-      <a href="{% url 'wordchain:sign_up' %}">Sign up here</a>
-      </div>
-      <a href="">Forgot password?</a>
-    </div>
+    {% block content %}
+    {% endblock %}  
     </div>  
 </body>
 
 </html>
-
