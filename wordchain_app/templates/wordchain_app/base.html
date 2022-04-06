@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Word Chain</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/play.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
+</head>
+
+<body>
+    <ul class="navbar">
+        <li><a href="{% url 'wordchain:play' %}">Play</a></li>
+        <li><a href="{% url 'wordchain:settings' %}">Settings</a></li>
+        <li><a href="{% url 'wordchain:account' %}">Account</a></li>
+        <li><a href="{% url 'wordchain:about' %}"> About</a></li>
+        <li style="float:right"><a href="/accounts/logout/">Log Out</a></li>
+    </ul>
+    <div class="game-container">
+    <div class="title-container">
+        <h1>Word Chain</h1>
+    </div>
+    {% block content %}
+    {% endblock %}  
+    </div>  
+</body>
+
+</html>
