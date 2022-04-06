@@ -37,3 +37,10 @@ def update_account_details(request):
         form = UserForm(instance=request.user)
     return render(request, "wordchain_app/update_account_details.html", {'form': form})
 
+@login_required
+def settings(request):
+    return render(request, "wordchain_app/settings.html")
+
+@login_required
+def account(request):
+    return render(request, "wordchain_app/account.html")

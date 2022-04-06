@@ -14,18 +14,19 @@
     <div class="title-container">
         <h1>Word Chain</h1>
     </div>
-    <div>
+    </div>
+    <div class="login-container">
       <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button class="button4" type="submit">Log In</button>
       </form>
-      <div class="signup-container">
       <h4>Don't have an account?</h4>
-      <a href="{% url 'wordchain:sign_up' %}">Sign up here</a>
+      
+      <a class="pass-links" href="{% url 'wordchain:sign_up' %}">Sign up here</a>
+      <div>
+      <a class="pass-links" href="">Forgot password?</a>
       </div>
-      <a href="">Forgot password?</a>
-    </div>
     </div>  
 </body>
 

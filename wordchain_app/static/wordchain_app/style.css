@@ -7,10 +7,13 @@
     border: 2px solid rgb(135, 237, 255);
     width: 180px;
     height: 50px;
-    margin: 20px;
 }
   
 .button4:hover {background-color: rgb(135, 237, 255);}
+
+.clear-and-check {
+    margin: 20px;
+}
 
 .button-container {
     flex-direction: row;
@@ -19,10 +22,27 @@
 
 h4 {
     margin-bottom: 0;
+    color: #ffffff;
 }
 
-.signup-container {
-    margin-bottom: 30px;
+.login-container {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+    'Lucida Sans', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    color: #ffffff;
+}
+
+.pass-links {
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .navbar {

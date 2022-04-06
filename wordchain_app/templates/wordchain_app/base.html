@@ -11,8 +11,8 @@
 <body>
     <ul class="navbar">
         <li><a href="{% url 'wordchain:play' %}">Play</a></li>
-        <li><a>Settings</a></li>
-        <li><a>Account</a></li>
+        <li><a href="{% url 'wordchain:settings' %}">Settings</a></li>
+        <li><a href="{% url 'wordchain:account' %}">Account</a></li>
         <li><a href="{% url 'wordchain:about' %}"> About</a></li>
         <li style="float:right"><a href="/accounts/logout/">Log Out</a></li>
     </ul>
