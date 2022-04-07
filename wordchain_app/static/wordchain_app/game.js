@@ -13,7 +13,15 @@ const modalDisplay = document.getElementById("game-modal")
 const modalContent = document.querySelector(".modal-content")
 
 // Test answer key and level
-let test_answer_key = ['TRAIN', 'TRACK', 'TEAM', 'BUILDING', 'BLOCK', 'HEAD']
+//let test_answer_key = ['TRAIN', 'TRACK', 'TEAM', 'BUILDING', 'BLOCK', 'HEAD']
+let test_answer_key = [
+        document.getElementById("first-word").innerHTML,
+        document.getElementById("second-word").innerHTML,
+        document.getElementById("third-word").innerHTML,
+        document.getElementById("fourth-word").innerHTML,
+        document.getElementById("fifth-word").innerHTML,
+        document.getElementById("sixth-word").innerHTML,
+        ]
 let level = 1
 
 // Tile layout
