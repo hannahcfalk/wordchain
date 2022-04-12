@@ -3,20 +3,18 @@ from django.contrib.auth.models import User
 
 
 class Chain(models.Model):
-    first_word = models.CharField(max_length=13, primary_key=True)
+    chain_id = models.AutoField(primary_key=True)
+    first_word = models.CharField(max_length=13)
     second_word = models.CharField(max_length=13)
     third_word = models.CharField(max_length=13)
     fourth_word = models.CharField(max_length=13)
     fifth_word = models.CharField(max_length=13)
     sixth_word = models.CharField(max_length=13)
 
-    class Meta:
-        unique_together = (("first_word", "sixth_word"),)
-
 
 class Score(models.Model):
-    value = models.IntegerField(primary_key=True)
-    rating = models.CharField(max_length=20)
+    score_id = models.AutoField(primary_key=True)
+    value = models.IntegerField()
 
 
 class Results(models.Model):
@@ -35,9 +33,9 @@ class Selects(models.Model):
 
 
 class Display(models.Model):
-    visual_mode = models.CharField(max_length=20, primary_key=True) # choice
+    display_id = models.AutoField(primary_key=True)
+    visual_mode = models.CharField(max_length=20)
     accessibility = models.CharField(max_length=20)
-
 
 class SetView(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
