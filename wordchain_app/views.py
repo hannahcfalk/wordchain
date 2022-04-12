@@ -2,7 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
 
 from .forms import UserForm
-from .models import Chain
+from .models import *
+from django.contrib.auth.models import User
+from django.db.models import Max
 
 @login_required
 def play(request):
@@ -51,3 +53,24 @@ def settings(request):
 @login_required
 def account(request):
     return render(request, "wordchain_app/account.html")
+
+@login_required
+def stats(request):
+    user = request.user
+    highest_score = get_highest_score(user)
+    context = {
+        "user": user,
+        "highest_score": highest_score
+        }
+    return render(request, "wordchain_app/stats.html", context)
+
+def get_highest_score(user):
+    user_scores = ReceiveScore.objects.all()
+    highest_score = 10
+    return 0 if highest_score is None else highest_score
+
+def get_average_score(user, level):
+    pass
+
+def get_all_scores(user):
+    pass
