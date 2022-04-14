@@ -1,0 +1,25 @@
+{% extends 'wordchain_app/base.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Word Chain - Stats</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/play.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
+</head>
+
+{% block content %}
+    <div style = "text-align-last:center;">
+        <h3>
+            Your stats: {{ user }}
+        </h3>
+        <h4>
+            Your highest score: {{ highest_score }}
+        </h4>
+    </div>
+    <button type="submit" class="btn button4">Export My Stats</button>
+{% endblock %}
+
+</html>
