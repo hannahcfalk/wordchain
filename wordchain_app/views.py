@@ -4,7 +4,8 @@ from django.shortcuts import render,redirect
 from .forms import UserForm
 from .models import *
 from django.contrib.auth.models import User
-from django.db.models import Max
+from django.db.models import Max, Avg
+import json
 
 @login_required
 def play(request):
@@ -142,20 +143,61 @@ def account(request):
 @login_required
 def stats(request):
     user = request.user
-    highest_score = get_highest_score(user)
+    highest_score = get_highest_score(user, 0)
+    average_score = get_average_score(user, 0)
+    all_scores = get_all_scores(user, 0)
+    download = create_download(highest_score, average_score, all_scores)
+    all_scores = json.dumps(all_scores)
     context = {
         "user": user,
-        "highest_score": highest_score
+        "highest_score": highest_score,
+        "average_score": average_score,
+        "all_scores": all_scores,
+        "download": download
         }
     return render(request, "wordchain_app/stats.html", context)
 
-def get_highest_score(user):
-    user_scores = ReceiveScore.objects.all()
-    highest_score = 10
+def get_highest_score(user, level):
+    user_id = user.id
+    try:
+        user_scores = ReceiveScore.objects.filter(user_id=user_id)
+    except ReceiveScore.DoesNotExist:
+        return 0
+    highest_score = user_scores.order_by('-score__value').first().score.value
     return 0 if highest_score is None else highest_score
 
 def get_average_score(user, level):
-    pass
+    user_id = user.id
+    try:
+        user_scores = ReceiveScore.objects.filter(user_id=user_id)
+    except ReceiveScore.DoesNotExist:
+        return 0
+    average_score = list(user_scores.values_list('score__value', flat=True))
+    average_score = round(sum(average_score)/len(average_score), 2)
+    return 0 if average_score is None else average_score
 
-def get_all_scores(user):
-    pass
+def get_all_scores(user, level):
+    user_id = user.id
+    try:
+        user_scores = ReceiveScore.objects.filter(user_id=user_id)
+    except ReceiveScore.DoesNotExist:
+        return 0
+    user_score_ids = list(user_scores.values_list('score__score_id', flat=True))
+    all_results = Results.objects.filter(score__score_id__in=user_score_ids)
+    all_scores = list(all_results.values_list('chain__first_word', 'chain__sixth_word', 'score__value'))
+    return 0 if all_scores is None else all_scores
+
+def create_download(high_score, average_score, all_scores):
+    download = {}
+    download['high score'] = high_score
+    download['average score'] = average_score
+    download['all scores'] = []
+    for score in all_scores:
+        s = {}
+        s['first word'] = score[0]
+        s['sixth word'] = score[1]
+        s['score'] = score[2]
+        download['all scores'].append(s)
+    download = json.dumps(download)
+    return download
+

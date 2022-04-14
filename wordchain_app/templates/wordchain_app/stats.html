@@ -12,13 +12,26 @@
 {% block content %}
     <div style = "text-align-last:center;">
         <h3>
-            Your stats: {{ user }}
+            {{ user }}'s stats
         </h3>
         <h4>
-            Your highest score: {{ highest_score }}
+            Highest score: {{ highest_score }}
         </h4>
+        <h4>
+            Average score: {{ average_score }}
+        </h4>
+        <h4>
+            All games so far:
+        </h4>
+        <br>
+        <div class="completed-games"></div>
+        <br>
     </div>
-    <button type="submit" class="btn button4">Export My Stats</button>
+    <div class="download-container">
+        <p id="download-content" hidden>{{ download }}</p>
+        <p id="all-scores" hidden>{{ all_scores }}</p>
+        <button class="btn button4" id="download-button">Export My Stats</button>
+    </div>
+    <script id="all-game-stats-js" data-scores="{{ all_scores }}" type="text/javascript" src="{% static 'wordchain_app/stats.js' %}"></script>
 {% endblock %}
-
 </html>

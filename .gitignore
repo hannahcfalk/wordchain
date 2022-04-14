@@ -20,5 +20,4 @@ folder_to_ignore/
 diegoenv/
 word-chain-env/
 
-static/
 staticfiles/
