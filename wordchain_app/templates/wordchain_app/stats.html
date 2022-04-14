@@ -13,13 +13,22 @@
 {% block content %}
     <div style = "text-align-last:center;">
         <h3>
-            Your stats: {{ user }}
+            {{ user }}'s stats
         </h3>
         <h4>
-            Your highest score: {{ highest_score }}
+            Highest score: {{ highest_score }}
         </h4>
+        <h4>
+            Average score: {{ average_score }}
+        </h4>
+        <h4>
+            All the games so far: {{ all_scores }}
+        </h4>
+        <br>
     </div>
-    <button type="submit" class="btn button4">Export My Stats</button>
+    <a href="">
+        <button class="btn button4">Export My Stats</button>
+    </a>
 {% endblock %}
 
 </html>
