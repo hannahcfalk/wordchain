@@ -76,9 +76,12 @@ def get_highest_score(user, level):
     user_id = user.id
     try:
         user_scores = ReceiveScore.objects.filter(user_id=user_id)
-    except ReceiveScore.DoesNotExist:
+    except ReceiveScore.DoesNotExist :
         return 0
-    highest_score = user_scores.order_by('-score__value').first().score.value
+    if user_scores.exists():
+        highest_score = user_scores.order_by('-score__value').first().score.value
+    else:
+        highest_score = 0
     return 0 if highest_score is None else highest_score
 
 def get_average_score(user, level):
@@ -87,8 +90,11 @@ def get_average_score(user, level):
         user_scores = ReceiveScore.objects.filter(user_id=user_id)
     except ReceiveScore.DoesNotExist:
         return 0
-    average_score = list(user_scores.values_list('score__value', flat=True))
-    average_score = round(sum(average_score)/len(average_score), 2)
+    if user_scores.exists():
+        average_score = list(user_scores.values_list('score__value', flat=True))
+        average_score = round(sum(average_score)/len(average_score), 2)
+    else:
+        average_score = 0
     return 0 if average_score is None else average_score
 
 def get_all_scores(user, level):
