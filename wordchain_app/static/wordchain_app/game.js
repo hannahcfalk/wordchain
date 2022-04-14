@@ -179,7 +179,7 @@ const checkRow = () => {
             possible_points = perfect_guess_score
             updateScore(score)
             createModalMessage('Game over! Your score is: ' + score)
-            createModalButtons('PLAY AGAIN', newGame)
+            createModalButtons('PLAY AGAIN', newGame(score))
             modalDisplay.style.display = 'block'
             return
         } else {
@@ -198,7 +198,7 @@ const checkRow = () => {
             possible_points = perfect_guess_score
             updateScore(score)
             createModalMessage('Nice work! Your score is: ' + score)
-            createModalButtons('PLAY AGAIN', newGame)
+            createModalButtons('PLAY AGAIN', newGame(score))
             modalDisplay.style.display = 'block'
             return
         } else {
@@ -283,10 +283,26 @@ const closeModalFunction = () => {
 // Send out score and chain
 // Get new chain
 // Clear out tiles
-const newGame = () => {
-    updateScore(0)
-    closeModalFunction()
-    clearTiles()
+let cookie = document.cookie
+let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
+
+const newGame = (score) => {
+    //updateScore(0)
+    //closeModalFunction()
+    //clearTiles()
+    let data = {score: score, chain: document.getElementById("chain-id").innerHTML}
+
+    fetch('/', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers:{
+          'Accept': 'application/json',
+          'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify(data) //JavaScript object of data to POST
+     })
+     .then(function(res){ console.log(res) })
+     window.location.reload()
 }
 
 // Clear tiles

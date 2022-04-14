@@ -1,0 +1,23 @@
+{% extends 'wordchain_app/base.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Word Chain - Play</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/play.css' %}">
+</head>
+
+
+<body>
+    {% block content %}
+    <div class="game-container">
+       <h3>Wow! You've been busy!</h3>
+        <p>Unfortunately there are no chains left for you to play right now!</p>
+    </div>
+    {% endblock %}
+</body> 
+
+

@@ -37,6 +37,7 @@ class Display(models.Model):
     visual_mode = models.CharField(max_length=20)
     accessibility = models.CharField(max_length=20)
 
+
 class SetView(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     display = models.ForeignKey('Display', on_delete=models.CASCADE)
