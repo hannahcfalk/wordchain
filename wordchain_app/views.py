@@ -15,8 +15,42 @@ def play(request):
     else:
         # Makes sure there isn't an error when the db is empty
         chain_dict = {'first_word': 'TRAIN', 'second_word': 'TRACK', 'third_word': 'TEAM', 'fourth_word': 'BUILDING', 'fifth_word': 'BLOCK', 'sixth_word': 'HEAD'}
+
+    if not SetView.objects.filter(user=request.user).exists():
+        display_name = Display.objects.get(display_id=1)
+        display = SetView.objects.create(user=request.user, display=display_name)
+        font = display_name.accessibility
+        mode = display_name.visual_mode
+    else:
+        display = SetView.objects.get(user=request.user)
+        display_name = display.display
+        font = display_name.accessibility
+        mode = display_name.visual_mode
+
+    if (mode == "Dark" and font == "Normal"):
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }
+            #game { color: #ffffff; } label { color: #ffffff; }""")
+        file.close()
+    elif (mode == "Light" and font == "Normal"):
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }
+            #game { color: #000000; } label { color: #000000; }""")
+        file.close()
+    elif (mode == "Dark" and font == "Bigger"):
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }
+            #game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file.close()
+    else:
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }
+            #game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file.close()
+
     return render(request, "wordchain_app/play.html", chain_dict)
 
+@login_required
 def about(request):
     return render(request, "wordchain_app/about.html")
 
@@ -48,12 +82,63 @@ def update_account_details(request):
     return render(request, "wordchain_app/update_account_details.html", {'form': form})
 
 @login_required
-def settings(request):
-    return render(request, "wordchain_app/settings.html")
-
-@login_required
 def account(request):
-    return render(request, "wordchain_app/account.html")
+    user = request.user.username
+    first_name = request.user.first_name
+    last_name = request.user.last_name
+
+    if not SetView.objects.filter(user=request.user).exists():
+        display_name = Display.objects.get(display_id=1)
+        display = SetView.objects.create(user=request.user, display=display_name)
+        font = display_name.accessibility
+        mode = display_name.visual_mode
+    else:
+        display = SetView.objects.get(user=request.user)
+        display_name = display.display
+        font = display_name.accessibility
+        mode = display_name.visual_mode
+
+    if request.method == 'POST':
+        if request.POST.get('font') == "Normal" or request.POST.get('font') == "Bigger":
+            font = request.POST.get('font')
+
+        if request.POST.get('mode') == "Light" or request.POST.get('mode') == "Dark":
+            mode = request.POST.get('mode')
+
+        display_view = SetView.objects.get(user=request.user)
+        display_view.display = Display.objects.get(accessibility=font, visual_mode=mode)
+        display_view.save()
+
+    if (mode == "Dark" and font == "Normal"):
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }
+            #game { color: #ffffff; } label { color: #ffffff; }""")
+        file.close()
+    elif (mode == "Light" and font == "Normal"):
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }
+            #game { color: #000000; } label { color: #000000; }""")
+        file.close()
+    elif (mode == "Dark" and font == "Bigger"):
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }
+            #game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file.close()
+    else:
+        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }
+            #game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file.close()
+    
+    context = {
+        "user": user,
+        "first_name": first_name,
+        "last_name": last_name,
+        "font": font,
+        "mode": mode
+    }
+
+    return render(request, "wordchain_app/account.html", context)
 
 @login_required
 def stats(request):
