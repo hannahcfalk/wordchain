@@ -5,6 +5,7 @@ from .forms import UserForm
 from .models import *
 from django.contrib.auth.models import User
 from django.db.models import Max, Avg
+import json
 
 @login_required
 def play(request):
@@ -60,7 +61,8 @@ def stats(request):
     highest_score = get_highest_score(user, 0)
     average_score = get_average_score(user, 0)
     all_scores = get_all_scores(user, 0)
-    download = 0
+    download = create_download(highest_score, average_score, all_scores)
+    all_scores = json.dumps(all_scores)
     context = {
         "user": user,
         "highest_score": highest_score,
@@ -97,5 +99,20 @@ def get_all_scores(user, level):
         return 0
     user_score_ids = list(user_scores.values_list('score__score_id', flat=True))
     all_results = Results.objects.filter(score__score_id__in=user_score_ids)
-    all_scores = list(all_results.values_list('score__value', 'chain__first_word', 'chain__sixth_word'))
+    all_scores = list(all_results.values_list('chain__first_word', 'chain__sixth_word', 'score__value'))
     return 0 if all_scores is None else all_scores
+
+def create_download(high_score, average_score, all_scores):
+    download = {}
+    download['high score'] = high_score
+    download['average score'] = average_score
+    download['all scores'] = []
+    for score in all_scores:
+        s = {}
+        s['first word'] = score[0]
+        s['sixth word'] = score[1]
+        s['score'] = score[2]
+        download['all scores'].append(s)
+    download = json.dumps(download)
+    return download
+
