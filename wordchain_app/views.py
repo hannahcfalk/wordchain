@@ -45,9 +45,5 @@ def update_account_details(request):
     return render(request, "wordchain_app/update_account_details.html", {'form': form})
 
 @login_required
-def settings(request):
-    return render(request, "wordchain_app/settings.html")
-
-@login_required
 def account(request):
     return render(request, "wordchain_app/account.html")

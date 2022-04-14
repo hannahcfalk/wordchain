@@ -15,10 +15,69 @@
         <h3>
             Account Details:
         </h3>
+        <p>Name: </p>
+        <p>Username: </p>
+
         <a href="{% url 'wordchain:update_account_details' %}">
-            <button class="button button4">Update Account Details</button>
+            <button class="button button4">Update Account</button>
         </a>
+
+        <h3>Display Settings: </h3>
+        <p>Font Size: </p>
+        <p>Mode: </p>
+
+        <button class="button button4" onclick="myFunction()">Change Display</button>
+
+        <div id="myDIV" style="display: none;">
+            <form>
+                <p>Font Size: </p>
+                <label style="display: inline-block">
+                    <input type="radio" id="normal" name="font" value="Normal">
+                    <span>Normal</span>
+                </label>
+
+                <label style="display: inline-block">
+                    <input type="radio" id="bigger" name="font" value="Bigger">
+                    <span>Bigger</span>
+                </label>
+
+                <p>Mode: </p>
+                <label style="display: inline-block">
+                    <input type="radio" id="dark" name="mode" value="Dark">
+                    <span>Dark</span>
+                </label>
+
+                <label style="display: inline-block">
+                    <input type="radio" id="light" name="mode" value="Light">
+                    <span>Light</span>
+                </label>
+            </br>
+                <input type="submit" value="Done" class="button button4" onclick="secondFunction()">
+            </form>
+        </div>
+
     </div>
+
+        <script>
+            function myFunction() {
+              var x = document.getElementById("myDIV");
+              if (x.style.display === "none") {
+                x.style.display = "block";
+              } else {
+                x.style.display = "none";
+              }
+            }
+
+            function secondFunction() {
+              var x = document.getElementById("myDIV");
+              x.style.display = "none";
+            }
+
+        </script>
+
+
+
+    
 {% endblock %}
 
 </html>
