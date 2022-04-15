@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
 
@@ -9,15 +10,16 @@ import json
 
 @login_required
 def play(request):
-    chain = Chain.objects.order_by('?').first()
-    if chain:
-        chain_dict = chain.__dict__
-    else:
-        # Makes sure there isn't an error when the db is empty
-        chain_dict = {'first_word': 'TRAIN', 'second_word': 'TRACK', 'third_word': 'TEAM', 'fourth_word': 'BUILDING', 'fifth_word': 'BLOCK', 'sixth_word': 'HEAD'}
-
+    if request.method == 'POST':
+        request_data = request.body.decode("utf-8")
+        data = json.loads(request_data)
+        score = Score.objects.create(value=data['score'])
+        ReceiveScore.objects.create(user=request.user, score=score)
+        chain = Chain.objects.get(chain_id=data['chain'])
+        Results.objects.create(chain=chain, score=score)
+        PlayGame.objects.create(chain=chain, user=request.user)
     if not SetView.objects.filter(user=request.user).exists():
-        display_name = Display.objects.get(display_id=1)
+        display_name, created = Display.objects.get_or_create(display_id=1, accessibility="Normal", visual_mode="Dark")
         display = SetView.objects.create(user=request.user, display=display_name)
         font = display_name.accessibility
         mode = display_name.visual_mode
@@ -48,11 +50,22 @@ def play(request):
             #game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
         file.close()
 
-    return render(request, "wordchain_app/play.html", chain_dict)
+    chain = Chain.objects.order_by('?').first()
+    # Checks if the user has played all chains or there are no chains in the db
+    if (Chain.objects.count() <= PlayGame.objects.filter(user_id=request.user.id).count()) or (chain is None):
+        return render(request, "wordchain_app/play-no-chains.html")
+    # Ensures that user only plays chains they haven't already played
+    while PlayGame.objects.filter(chain=chain, user_id=request.user.id).exists():
+        chain = Chain.objects.order_by('?').first()
+    return render(request, "wordchain_app/play.html", chain.__dict__)
+
+
+
 
 @login_required
 def about(request):
     return render(request, "wordchain_app/about.html")
+
 
 def sign_up(request):
     if request.method == 'POST':
@@ -88,7 +101,7 @@ def account(request):
     last_name = request.user.last_name
 
     if not SetView.objects.filter(user=request.user).exists():
-        display_name = Display.objects.get(display_id=1)
+        display_name, created = Display.objects.get_or_create(display_id=1, accessibility="Normal", visual_mode="Dark")
         display = SetView.objects.create(user=request.user, display=display_name)
         font = display_name.accessibility
         mode = display_name.visual_mode
@@ -106,6 +119,7 @@ def account(request):
             mode = request.POST.get('mode')
 
         display_view = SetView.objects.get(user=request.user)
+        print("hello")
         display_view.display = Display.objects.get(accessibility=font, visual_mode=mode)
         display_view.save()
 
@@ -159,9 +173,8 @@ def stats(request):
 
 def get_highest_score(user, level):
     user_id = user.id
-    try:
-        user_scores = ReceiveScore.objects.filter(user_id=user_id)
-    except ReceiveScore.DoesNotExist :
+    user_scores = ReceiveScore.objects.filter(user_id=user_id)
+    if not user_scores:
         return 0
     if user_scores.exists():
         highest_score = user_scores.order_by('-score__value').first().score.value
@@ -171,9 +184,8 @@ def get_highest_score(user, level):
 
 def get_average_score(user, level):
     user_id = user.id
-    try:
-        user_scores = ReceiveScore.objects.filter(user_id=user_id)
-    except ReceiveScore.DoesNotExist:
+    user_scores = ReceiveScore.objects.filter(user_id=user_id)
+    if not user_scores:
         return 0
     if user_scores.exists():
         average_score = list(user_scores.values_list('score__value', flat=True))
@@ -184,9 +196,8 @@ def get_average_score(user, level):
 
 def get_all_scores(user, level):
     user_id = user.id
-    try:
-        user_scores = ReceiveScore.objects.filter(user_id=user_id)
-    except ReceiveScore.DoesNotExist:
+    user_scores = ReceiveScore.objects.filter(user_id=user_id)
+    if not user_scores:
         return 0
     user_score_ids = list(user_scores.values_list('score__score_id', flat=True))
     all_results = Results.objects.filter(score__score_id__in=user_score_ids)
