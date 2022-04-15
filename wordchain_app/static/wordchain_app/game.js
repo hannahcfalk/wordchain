@@ -110,6 +110,10 @@ const addLetter = (letter) => {
             tile.setAttribute('data', letter)
             currentTile++
         }
+    }else{
+        if (letter == 'Backspace') {
+            deleteLetter()
+        }        
     }
 }
 
