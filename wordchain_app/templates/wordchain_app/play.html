@@ -7,13 +7,13 @@
 <head>
     <title>Word Chain - Play</title>
     <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/play.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/mode.css' %}">
 </head>
 
 
 <body>
     {% block content %}
-    <div class="game-container">
+    <div class="game-container" id="game">
         <div class="score-container">
             <p id="score">Score: 0</p>
         </div>
