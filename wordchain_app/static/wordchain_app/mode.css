@@ -1,7 +1,2 @@
-<<<<<<< HEAD
-#body { background-color: #ffffff; }
-            #game { color: #000000; } label { color: #000000; }
-=======
 #body { background-color: #121213; }
-            #game { color: #ffffff; } label { color: #ffffff; }
->>>>>>> 0f1f73ce5c14d6640ec2b0b1efab87b86ef4c422
+            #game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }
