@@ -19,7 +19,7 @@ def play(request):
         Results.objects.create(chain=chain, score=score)
         PlayGame.objects.create(chain=chain, user=request.user)
     if not SetView.objects.filter(user=request.user).exists():
-        display_name = Display.objects.get(display_id=1)
+        display_name, created = Display.objects.get_or_create(display_id=1, accessibility="Normal", visual_mode="Dark")
         display = SetView.objects.create(user=request.user, display=display_name)
         font = display_name.accessibility
         mode = display_name.visual_mode
@@ -51,7 +51,6 @@ def play(request):
         file.close()
 
     chain = Chain.objects.order_by('?').first()
-    return render(request, "wordchain_app/play.html", chain_dict)
     # Checks if the user has played all chains or there are no chains in the db
     if (Chain.objects.count() <= PlayGame.objects.filter(user_id=request.user.id).count()) or (chain is None):
         return render(request, "wordchain_app/play-no-chains.html")
@@ -102,7 +101,7 @@ def account(request):
     last_name = request.user.last_name
 
     if not SetView.objects.filter(user=request.user).exists():
-        display_name = Display.objects.get(display_id=1)
+        display_name, created = Display.objects.get_or_create(display_id=1, accessibility="Normal", visual_mode="Dark")
         display = SetView.objects.create(user=request.user, display=display_name)
         font = display_name.accessibility
         mode = display_name.visual_mode
@@ -120,6 +119,7 @@ def account(request):
             mode = request.POST.get('mode')
 
         display_view = SetView.objects.get(user=request.user)
+        print("hello")
         display_view.display = Display.objects.get(accessibility=font, visual_mode=mode)
         display_view.save()
 
