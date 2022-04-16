@@ -1,38 +1,43 @@
 // Get HTML elements
 const gameDisplay = document.querySelector(".completed-games")
-//const scriptSource = document.getElementById("all-game-stats-js")
-//const gameList = JSON.parse(scriptSource.getAttribute("data-scores"))
-const gameList = JSON.parse(document.getElementById("all-scores").innerHTML)
-const downloadButton = document.getElementById("download-button")
 const downloadContainer = document.querySelector(".download-container")
+const downloadButton = document.getElementById("download-button")
+const gameList = JSON.parse(document.getElementById("all-scores").innerHTML)
 
 // Create table
 function createTable (){
+    if(gameList.length == 0){
+        var no_scores = document.createElement('h4')
+        no_scores.innerHTML = 'No scores!'
+        gameDisplay.append(no_scores)
+        return
+    }
+
     var tableElement = document.createElement('table')
     var tableHeadings = document.createElement('tr')
 
     var firstWordHeading = document.createElement('td')
     tableHeadings.appendChild(document.createTextNode("First Word"))
     tableHeadings.appendChild(firstWordHeading)
-    var firstWordHeading = document.createElement('td')
+
+    var sixthWordHeading = document.createElement('td')
     tableHeadings.appendChild(document.createTextNode("Sixth Word"))
-    tableHeadings.appendChild(firstWordHeading)
-    var firstWordHeading = document.createElement('td')
+    tableHeadings.appendChild(sixthWordHeading)
+
+    var scoreHeading = document.createElement('td')
     tableHeadings.appendChild(document.createTextNode("Score"))
-    tableHeadings.appendChild(firstWordHeading)
+    tableHeadings.appendChild(scoreHeading)
     tableElement.append(tableHeadings)
 
     for (let i = 0; i < gameList.length; i++) {
         var tableRow = document.createElement('tr')
         for (let j = 0; j < gameList[i].length; j++){
             var tableData = document.createElement('td')
-            //document.createTextNode(gameList[i][j])
             tableRow.appendChild(document.createTextNode(gameList[i][j]))
             tableRow.appendChild(tableData)
         }
         tableElement.appendChild(tableRow)
     }
-    //tableElement.appendChild(tableBody)
     gameDisplay.appendChild(tableElement)
 }
 createTable()

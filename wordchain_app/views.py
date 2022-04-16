@@ -89,7 +89,7 @@ def update_account_details(request):
         form = UserForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('wordchain:home')
+            return redirect('wordchain:play')
     else:
         form = UserForm(instance=request.user)
     return render(request, "wordchain_app/update_account_details.html", {'form': form})
@@ -198,11 +198,11 @@ def get_all_scores(user, level):
     user_id = user.id
     user_scores = ReceiveScore.objects.filter(user_id=user_id)
     if not user_scores:
-        return 0
+        return []
     user_score_ids = list(user_scores.values_list('score__score_id', flat=True))
     all_results = Results.objects.filter(score__score_id__in=user_score_ids)
     all_scores = list(all_results.values_list('chain__first_word', 'chain__sixth_word', 'score__value'))
-    return 0 if all_scores is None else all_scores
+    return [] if all_scores is None else all_scores
 
 def create_download(high_score, average_score, all_scores):
     download = {}
