@@ -22,7 +22,7 @@ let test_answer_key = [
         document.getElementById("fifth-word").innerHTML,
         document.getElementById("sixth-word").innerHTML,
         ]
-let level = 1
+let level = document.getElementById("level").innerHTML
 
 // Tile layout
 const guessRows = [
@@ -42,7 +42,7 @@ if (level == 1) {
 } else if (level == 2) {
     perfect_guess_score = 20
 } else if (level == 3) {
-    perfect_guess_score = 20
+    perfect_guess_score = 30
 } else {
     perfect_guess_score = 0
 }

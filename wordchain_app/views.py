@@ -57,7 +57,16 @@ def play(request):
     # Ensures that user only plays chains they haven't already played
     while PlayGame.objects.filter(chain=chain, user_id=request.user.id).exists():
         chain = Chain.objects.order_by('?').first()
-    return render(request, "wordchain_app/play.html", chain.__dict__)
+    
+    # Get chain level
+    isassignto = IsAssignedTo.objects.filter(chain=chain)
+    level = isassignto.values_list('level__difficulty')[0][0]
+    context = {
+        "level": level,
+    }
+    context.update(chain.__dict__)
+    
+    return render(request, "wordchain_app/play.html", context)
 
 
 
