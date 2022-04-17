@@ -1,10 +1,7 @@
 // Get HTML elements
 const tileDisplay = document.querySelector('.tile-container')
-const messageDisplay = document.querySelector('.message-container')
-const playButton = document.getElementById("play")
 const clearButton = document.getElementById("clear")
 const checkButton = document.getElementById("check")
-const scoreDisplay = document.querySelector(".score-container")
 const modalDisplay = document.getElementById("game-modal")
 const modalContent = document.querySelector(".modal-content")
 
@@ -123,14 +120,6 @@ const deleteLetter = () => {
     }
 }
 
-// Display message
-const showMessage = (message) => {
-    const messageElement = document.createElement('p')
-    messageElement.textContent = message
-    messageDisplay.append(messageElement)
-    setTimeout(() => messageDisplay.removeChild(messageElement), 2000)
-}
-
 // Flip tiles
 const flipTile = () => {
     const rowTiles = document.querySelector('#guessRow-' + currentRow).childNodes
@@ -172,9 +161,9 @@ const checkRow = () => {
             isGameOver = true
             score += possible_points
             possible_points = perfect_guess_score
-            updateScore(score)
+            updateScore()
             createModalMessage('Game over! Your score is: ' + score)
-            createModalButtons('PLAY AGAIN', newGame(score))
+            createModalButtons('PLAY AGAIN', newGame)
             modalDisplay.style.display = 'block'
             return
         } else {
@@ -191,9 +180,9 @@ const checkRow = () => {
             isGameOver = true
             score += possible_points
             possible_points = perfect_guess_score
-            updateScore(score)
+            updateScore()
             createModalMessage('Nice work! Your score is: ' + score)
-            createModalButtons('PLAY AGAIN', newGame(score))
+            createModalButtons('PLAY AGAIN', newGame)
             modalDisplay.style.display = 'block'
             return
         } else {
@@ -205,7 +194,7 @@ const checkRow = () => {
             createModalButtons('OK', closeModalFunction)
             modalDisplay.style.display = 'block'
             addHint(currentRow, hintTile)
-            updateScore(score)
+            updateScore()
         }
     }
 }
@@ -237,13 +226,13 @@ const clearRow = (index) => {
         guessRows[index][i] = ''
         tile.setAttribute('data', '')
     }
-    currentTile = 0
+    currentTile = hintTile
 }
 
 // Updates score
-const updateScore = (updated_score) => {
-    const score = document.getElementById('score')
-    score.innerHTML = "Score: " + updated_score
+const updateScore = () => {
+    const scoreElement = document.getElementById('score')
+    scoreElement.innerHTML = "Score: " + score
 }
 
 // Modal message
@@ -277,7 +266,7 @@ let cookie = document.cookie
 let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
 
 // Create new game
-const newGame = (score) => {
+const newGame = () => {
     let data = {score: score, chain: document.getElementById("chain-id").innerHTML}
 
     fetch('/', {
@@ -291,12 +280,4 @@ const newGame = (score) => {
      })
      .then(function(res){ console.log(res) })
      window.location.reload()
-}
-
-// Clear tiles
-const clearTiles = () => {
-    hintTile = 0
-    for (let i = 0; i < guessRows.length; i++) {
-        clearRow(i)
-    }
 }

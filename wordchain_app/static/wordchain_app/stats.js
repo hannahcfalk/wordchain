@@ -8,7 +8,7 @@ const gameList = JSON.parse(document.getElementById("all-scores").innerHTML)
 function createTable (){
     if(gameList.length == 0){
         var no_scores = document.createElement('h4')
-        no_scores.innerHTML = 'No scores!'
+        no_scores.innerHTML = 'No Scores!'
         gameDisplay.append(no_scores)
         return
     }

@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
+from django.db.models import Q
 
 from .forms import UserForm
 from .models import *
@@ -51,8 +52,9 @@ def play(request):
     while PlayGame.objects.filter(chain=chain, user_id=request.user.id).exists():
         chain = Chain.objects.order_by('?').first()
 
-    isassignto = IsAssignedTo.objects.filter(chain=chain)
-    level = isassignto.values_list('level__difficulty')[0][0]
+    isassignto = IsAssignedTo.objects.get(chain=chain)
+    Selects.objects.update_or_create(user=request.user, defaults={"level":isassignto.level})
+    level = isassignto.level.difficulty
     context = {
         "level": level,
     }
@@ -147,15 +149,25 @@ def account(request):
 @login_required
 def stats(request):
     user = request.user
-    highest_score = get_highest_score(user, 0)
-    average_score = get_average_score(user, 0)
-    all_scores = get_all_scores(user, 0)
-    download = create_download(highest_score, average_score, all_scores)
+    highest_score_level1 = get_highest_score(user, 1)
+    highest_score_level2 = get_highest_score(user, 2)
+    highest_score_level3 = get_highest_score(user, 3)
+
+    average_score_level1 = get_average_score(user, 1)
+    average_score_level2 = get_average_score(user, 2)
+    average_score_level3 = get_average_score(user, 3)
+
+    all_scores = get_all_scores(user)
+    download = create_download(highest_score_level1, highest_score_level2, highest_score_level3, average_score_level1, average_score_level2, average_score_level3, all_scores)
     all_scores = json.dumps(all_scores)
     context = {
         "user": user,
-        "highest_score": highest_score,
-        "average_score": average_score,
+        "highest_score_level1": highest_score_level1,
+        "highest_score_level2": highest_score_level2,
+        "highest_score_level3": highest_score_level3,
+        "average_score_level1": average_score_level1,
+        "average_score_level2": average_score_level2,
+        "average_score_level3": average_score_level3,
         "all_scores": all_scores,
         "download": download
     }
@@ -163,31 +175,45 @@ def stats(request):
 
 
 def get_highest_score(user, level):
-    user_id = user.id
-    user_scores = ReceiveScore.objects.filter(user_id=user_id)
-    if not user_scores:
+    try:
+        user_id = user.id
+        user_scores = ReceiveScore.objects.filter(user_id=user_id)
+        user_score_ids = list(user_scores.values_list('score__score_id', flat=True))
+        all_results = Results.objects.filter(score__score_id__in=user_score_ids)
+
+        all_results_chains = list(all_results.values_list('chain__chain_id', flat=True))
+        all_chains = IsAssignedTo.objects.filter(Q(chain__chain_id__in=all_results_chains) & Q(level__difficulty__exact=level))
+
+        all_chain_ids = list(all_chains.values_list('chain__chain_id', flat=True))
+        all_chain_ids_scores = Results.objects.filter(chain__chain_id__in=all_chain_ids)
+
+        highest_score = all_chain_ids_scores.order_by('-score__value').first().score.value
+    except:
         return 0
-    if user_scores.exists():
-        highest_score = user_scores.order_by('-score__value').first().score.value
-    else:
-        highest_score = 0
     return 0 if highest_score is None else highest_score
 
 
 def get_average_score(user, level):
-    user_id = user.id
-    user_scores = ReceiveScore.objects.filter(user_id=user_id)
-    if not user_scores:
-        return 0
-    if user_scores.exists():
-        average_score = list(user_scores.values_list('score__value', flat=True))
+    try:
+        user_id = user.id
+        user_scores = ReceiveScore.objects.filter(user_id=user_id)
+        user_score_ids = list(user_scores.values_list('score__score_id', flat=True))
+        all_results = Results.objects.filter(score__score_id__in=user_score_ids)
+
+        all_results_chains = list(all_results.values_list('chain__chain_id', flat=True))
+        all_chains = IsAssignedTo.objects.filter(Q(chain__chain_id__in=all_results_chains) & Q(level__difficulty__exact=level))
+
+        all_chain_ids = list(all_chains.values_list('chain__chain_id', flat=True))
+        all_chain_ids_scores = Results.objects.filter(chain__chain_id__in=all_chain_ids)
+
+        average_score = list(all_chain_ids_scores.values_list('score__value', flat=True))
         average_score = round(sum(average_score)/len(average_score), 2)
-    else:
-        average_score = 0
+    except:
+        return 0
     return 0 if average_score is None else average_score
 
 
-def get_all_scores(user, level):
+def get_all_scores(user):
     user_id = user.id
     user_scores = ReceiveScore.objects.filter(user_id=user_id)
     if not user_scores:
@@ -198,16 +224,20 @@ def get_all_scores(user, level):
     return [] if all_scores is None else all_scores
 
 
-def create_download(high_score, average_score, all_scores):
+def create_download(highest_score_level1, highest_score_level2, highest_score_level3, average_score_level1, average_score_level2, average_score_level3, all_scores):
     download = {}
-    download['high score'] = high_score
-    download['average score'] = average_score
-    download['all scores'] = []
+    download['Highest Easy Chain Score'] = highest_score_level1
+    download['Highest Medium Chain Score'] = highest_score_level2
+    download['Highest Hard Chain Score'] = highest_score_level3
+    download['Average Easy Chain Score'] = average_score_level1
+    download['Average Medium Chain Score'] = average_score_level2
+    download['Average Hard Chain Score'] = average_score_level3
+    download['All Scores'] = []
     for score in all_scores:
         s = {}
-        s['first word'] = score[0]
-        s['sixth word'] = score[1]
-        s['score'] = score[2]
-        download['all scores'].append(s)
+        s['First Word'] = score[0]
+        s['Sixth Word'] = score[1]
+        s['Score'] = score[2]
+        download['All Scores'].append(s)
     download = json.dumps(download)
     return download
