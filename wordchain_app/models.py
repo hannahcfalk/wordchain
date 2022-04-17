@@ -26,6 +26,9 @@ class Level(models.Model):
     difficulty = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.name
+
 
 class Selects(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

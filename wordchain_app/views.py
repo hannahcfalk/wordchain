@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from django.db.models import Max, Avg
+from django.shortcuts import render,redirect
+
 from .forms import UserForm
 from .models import *
 import json
