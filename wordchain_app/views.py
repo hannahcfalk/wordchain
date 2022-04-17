@@ -1,12 +1,11 @@
-import json
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render,redirect
-
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.db.models import Max, Avg
 from .forms import UserForm
 from .models import *
-from django.contrib.auth.models import User
-from django.db.models import Max, Avg
 import json
+
 
 @login_required
 def play(request):
@@ -18,6 +17,7 @@ def play(request):
         chain = Chain.objects.get(chain_id=data['chain'])
         Results.objects.create(chain=chain, score=score)
         PlayGame.objects.create(chain=chain, user=request.user)
+
     if not SetView.objects.filter(user=request.user).exists():
         display_name, created = Display.objects.get_or_create(display_id=1, accessibility="Normal", visual_mode="Dark")
         display = SetView.objects.create(user=request.user, display=display_name)
@@ -30,45 +30,35 @@ def play(request):
         mode = display_name.visual_mode
 
     if (mode == "Dark" and font == "Normal"):
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }
-            #game { color: #ffffff; } label { color: #ffffff; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }#game { color: #ffffff; } label { color: #ffffff; }""")
         file.close()
     elif (mode == "Light" and font == "Normal"):
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }
-            #game { color: #000000; } label { color: #000000; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }#game { color: #000000; } label { color: #000000; }""")
         file.close()
     elif (mode == "Dark" and font == "Bigger"):
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }
-            #game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }#game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
         file.close()
     else:
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }
-            #game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }#game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
         file.close()
 
     chain = Chain.objects.order_by('?').first()
-    # Checks if the user has played all chains or there are no chains in the db
     if (Chain.objects.count() <= PlayGame.objects.filter(user_id=request.user.id).count()) or (chain is None):
         return render(request, "wordchain_app/play-no-chains.html")
-    # Ensures that user only plays chains they haven't already played
     while PlayGame.objects.filter(chain=chain, user_id=request.user.id).exists():
         chain = Chain.objects.order_by('?').first()
-    
-    # Get chain level
+
     isassignto = IsAssignedTo.objects.filter(chain=chain)
     level = isassignto.values_list('level__difficulty')[0][0]
     context = {
         "level": level,
     }
     context.update(chain.__dict__)
-    
     return render(request, "wordchain_app/play.html", context)
-
-
 
 
 @login_required
@@ -82,14 +72,9 @@ def sign_up(request):
         if form.is_valid():
             form.save()
             return redirect('wordchain:play')
-
     else:
         form = UserForm()
     return render(request, "registration/sign_up.html", {'form': form})
-
-
-def password_reset(request):
-    return render(request, "wordchain_app/password_reset.html")
 
 
 @login_required
@@ -102,6 +87,7 @@ def update_account_details(request):
     else:
         form = UserForm(instance=request.user)
     return render(request, "wordchain_app/update_account_details.html", {'form': form})
+
 
 @login_required
 def account(request):
@@ -128,31 +114,26 @@ def account(request):
             mode = request.POST.get('mode')
 
         display_view = SetView.objects.get(user=request.user)
-        print("hello")
         display_view.display = Display.objects.get(accessibility=font, visual_mode=mode)
         display_view.save()
 
     if (mode == "Dark" and font == "Normal"):
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }
-            #game { color: #ffffff; } label { color: #ffffff; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }#game { color: #ffffff; } label { color: #ffffff; }""")
         file.close()
     elif (mode == "Light" and font == "Normal"):
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }
-            #game { color: #000000; } label { color: #000000; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }#game { color: #000000; } label { color: #000000; }""")
         file.close()
     elif (mode == "Dark" and font == "Bigger"):
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }
-            #game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #121213; }#game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
         file.close()
     else:
-        file=open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }
-            #game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
+        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
+        file.write("""#body { background-color: #ffffff; }#game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
         file.close()
-    
+
     context = {
         "user": user,
         "first_name": first_name,
@@ -162,6 +143,7 @@ def account(request):
     }
 
     return render(request, "wordchain_app/account.html", context)
+
 
 @login_required
 def stats(request):
@@ -177,8 +159,9 @@ def stats(request):
         "average_score": average_score,
         "all_scores": all_scores,
         "download": download
-        }
+    }
     return render(request, "wordchain_app/stats.html", context)
+
 
 def get_highest_score(user, level):
     user_id = user.id
@@ -190,6 +173,7 @@ def get_highest_score(user, level):
     else:
         highest_score = 0
     return 0 if highest_score is None else highest_score
+
 
 def get_average_score(user, level):
     user_id = user.id
@@ -203,6 +187,7 @@ def get_average_score(user, level):
         average_score = 0
     return 0 if average_score is None else average_score
 
+
 def get_all_scores(user, level):
     user_id = user.id
     user_scores = ReceiveScore.objects.filter(user_id=user_id)
@@ -212,6 +197,7 @@ def get_all_scores(user, level):
     all_results = Results.objects.filter(score__score_id__in=user_score_ids)
     all_scores = list(all_results.values_list('chain__first_word', 'chain__sixth_word', 'score__value'))
     return [] if all_scores is None else all_scores
+
 
 def create_download(high_score, average_score, all_scores):
     download = {}
@@ -226,4 +212,3 @@ def create_download(high_score, average_score, all_scores):
         download['all scores'].append(s)
     download = json.dumps(download)
     return download
-

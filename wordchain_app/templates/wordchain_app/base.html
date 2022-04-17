@@ -3,26 +3,25 @@
 <html lang="en">
 
 <head>
-    <title>Word Chain</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/mode.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/mode.css' %}">
 </head>
 
 <body id="body">
-    <ul class="navbar">
-        <li><a href="{% url 'wordchain:play' %}">Play</a></li>
-        <li><a href="{% url 'wordchain:account' %}">Account</a></li>
-        <li><a href="{% url 'wordchain:about' %}"> About</a></li>
-        <li><a href="{% url 'wordchain:stats' %}">Stats</a></li>
-        <li style="float:right"><a href="/accounts/logout/">Log Out</a></li>
-    </ul>
-    <div class="game-container" id="game">
-    <div class="title-container">
-        <h1>Word Chain</h1>
-    </div>
-    {% block content %}
-    {% endblock %}  
-    </div>  
+	<ul class="navbar">
+		<li><a href="{% url 'wordchain:play' %}">Play</a></li>
+		<li><a href="{% url 'wordchain:account' %}">Account</a></li>
+		<li><a href="{% url 'wordchain:about' %}"> About</a></li>
+		<li><a href="{% url 'wordchain:stats' %}">Stats</a></li>
+		<li style="float:right"><a href="/accounts/logout/">Log Out</a></li>
+	</ul>
+	<div class="game-container" id="game">
+		<div class="title-container">
+			<h1>Word Chain</h1>
+		</div>
+		{% block content %}
+		{% endblock %}
+	</div>
 </body>
 
 </html>

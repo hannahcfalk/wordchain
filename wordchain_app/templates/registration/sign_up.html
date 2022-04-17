@@ -1,26 +1,25 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Word Chain</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
+	<title>Word Chain - Sign Up</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
 </head>
 
 <body>
-    <div class="game-container">
-    <div class="title-container">
-        <h1>Word Chain</h1>
-    </div>
-      <h1>Welcome New Player!</h1>
-      <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="button4" type="submit">Sign Up</button>
-      </form>
-      </div>
-    </div>  
+	<div class="game-container">
+		<div class="title-container">
+			<h1>Word Chain</h1>
+		</div>
+		<h1>Welcome New Player!</h1>
+		<form method="post">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<button class="button4" type="submit">Sign Up</button>
+		</form>
+	</div>
+	</div>
 </body>
 
 </html>

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y=s_p%@mbkga2l6_mkfs0t+)#!oxd8*ihf*vj#5i8(goyi$$uw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True   # SET TO FALSE BEFORE DEPLOYING
 LOCAL = True   # SET TO FALSE BEFORE DEPLOYING
 
 ALLOWED_HOSTS = ['*']
@@ -86,9 +86,6 @@ if LOCAL:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-
-# NOTE
-# Before deploying, uncomment this and ensure that the above is commented out
 else:
     DATABASES = {
         'default': {

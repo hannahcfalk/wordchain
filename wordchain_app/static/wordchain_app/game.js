@@ -1,7 +1,3 @@
-// Reference: https://github.com/kubowania/wordle-javascript
-// https://www.youtube.com/watch?v=mpby4HiElek
-// https://www.youtube.com/watch?v=j7OhcuZQ-q8
-
 // Get HTML elements
 const tileDisplay = document.querySelector('.tile-container')
 const messageDisplay = document.querySelector('.message-container')
@@ -12,16 +8,15 @@ const scoreDisplay = document.querySelector(".score-container")
 const modalDisplay = document.getElementById("game-modal")
 const modalContent = document.querySelector(".modal-content")
 
-// Test answer key and level
-//let test_answer_key = ['TRAIN', 'TRACK', 'TEAM', 'BUILDING', 'BLOCK', 'HEAD']
-let test_answer_key = [
-        document.getElementById("first-word").innerHTML,
-        document.getElementById("second-word").innerHTML,
-        document.getElementById("third-word").innerHTML,
-        document.getElementById("fourth-word").innerHTML,
-        document.getElementById("fifth-word").innerHTML,
-        document.getElementById("sixth-word").innerHTML,
-        ]
+// word chain and level variables
+let word_chain = [
+	document.getElementById("first-word").innerHTML,
+	document.getElementById("second-word").innerHTML,
+	document.getElementById("third-word").innerHTML,
+	document.getElementById("fourth-word").innerHTML,
+	document.getElementById("fifth-word").innerHTML,
+	document.getElementById("sixth-word").innerHTML,
+	]
 let level = document.getElementById("level").innerHTML
 
 // Tile layout
@@ -68,9 +63,9 @@ guessRows.forEach((guessRow, guessRowIndex) => {
 
 // Add starting words
 const addStartingWord = (index) => {
-    for (let i = 0; i < test_answer_key[index].length; i++) {
+    for (let i = 0; i < word_chain[index].length; i++) {
         const tile = document.getElementById('guessRow-' + index + '-tile-' + i)
-        const letter = test_answer_key[index][i]
+        const letter = word_chain[index][i]
         tile.textContent = letter
         guessRows[index][i] = letter
         tile.setAttribute('data', letter)
@@ -168,12 +163,12 @@ const handleCheckClick = () => {
 // Checks current row
 const checkRow = () => {
     const guess = guessRows[currentRow].join('')
-    if (guess != test_answer_key[currentRow]) {
+    if (guess != word_chain[currentRow]) {
         if (possible_points != 0) {
             possible_points -= incorrect_penalty
         }
         shakeTile()
-        if (hintTile == test_answer_key[currentRow].length - 1) {
+        if (hintTile == word_chain[currentRow].length - 1) {
             isGameOver = true
             score += possible_points
             possible_points = perfect_guess_score
@@ -183,7 +178,7 @@ const checkRow = () => {
             modalDisplay.style.display = 'block'
             return
         } else {
-            createModalMessage('Nice try! The next letter of the word is "' + test_answer_key[currentRow][hintTile] + '"')
+            createModalMessage('Nice try! The next letter of the word is "' + word_chain[currentRow][hintTile] + '"')
             createModalButtons('OK', closeModalFunction)
             modalDisplay.style.display = 'block'
             addHint(currentRow, hintTile)
@@ -206,7 +201,7 @@ const checkRow = () => {
             currentTile = 1
             score += possible_points
             hintTile = 0
-            createModalMessage('Nice job! The next word starts with "' + test_answer_key[currentRow][hintTile] + '"')
+            createModalMessage('Nice job! The next word starts with "' + word_chain[currentRow][hintTile] + '"')
             createModalButtons('OK', closeModalFunction)
             modalDisplay.style.display = 'block'
             addHint(currentRow, hintTile)
@@ -217,7 +212,7 @@ const checkRow = () => {
 
 // Add hint
 const addHint = (row, tile) => {
-    letter = test_answer_key[row][tile]
+    letter = word_chain[row][tile]
     const hTile = document.getElementById('guessRow-' + row + '-tile-' + tile)
     hTile.textContent = letter
     guessRows[row][tile] = letter
@@ -246,7 +241,6 @@ const clearRow = (index) => {
 }
 
 // Updates score
-// Cool feature: a +[score increase] that fades
 const updateScore = (updated_score) => {
     const score = document.getElementById('score')
     score.innerHTML = "Score: " + updated_score
@@ -279,17 +273,11 @@ const closeModalFunction = () => {
     modalDisplay.style.display = 'none'
 }
 
-// Start a new game
-// Send out score and chain
-// Get new chain
-// Clear out tiles
 let cookie = document.cookie
 let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
 
+// Create new game
 const newGame = (score) => {
-    //updateScore(0)
-    //closeModalFunction()
-    //clearTiles()
     let data = {score: score, chain: document.getElementById("chain-id").innerHTML}
 
     fetch('/', {
@@ -299,7 +287,7 @@ const newGame = (score) => {
           'Accept': 'application/json',
           'X-CSRFToken': csrfToken,
       },
-      body: JSON.stringify(data) //JavaScript object of data to POST
+      body: JSON.stringify(data)
      })
      .then(function(res){ console.log(res) })
      window.location.reload()

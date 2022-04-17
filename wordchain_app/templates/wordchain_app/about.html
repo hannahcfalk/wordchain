@@ -1,31 +1,21 @@
 {% extends 'wordchain_app/base.html' %}
-{% load static %}
-
-<!DOCTYPE html>
-<html lang="en">
+{% block content %}
 
 <head>
-    <title>Word Chain - Home</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
+	<title>Word Chain - About</title>
 </head>
-
-{% block content %}
-    <div style = "text-align-last:center;">
-        <h3>
-            How to play:
-        </h3>
-        <p>
-            You will be guessinng a chain of six words that are connected by two word phrases (e.g. Wide, Open, Sesame, Street, Car, Alarm). <br>
-            You are given the first and last word in the chain, and your goal is to then guess the four words that lead the first word to the last. <br>
-            You will start by getting the first letter of the second word in the chain, <br>
-            then you must think of a word that connects to the first in a two word phrase (e.g. space shuttle, shuttle bus). <br>
-            If you guess correct, you will move to the next word until you reach the end. <br>
-            If you guess wrong, you will receive another letter in the word to help with your guesses. <br>
-        </p>
-    </div>
-    <a href="{% url 'wordchain:play' %}">
-        <button class="button button4">Play</button>
-    </a>
+<div style="text-align-last:center;">
+	<h3>How to play:</h3>
+	<p>You will be guessinng a chain of six words that are connected by two word phrases (e.g. WIDE, OPEN, SESAME,
+		STREET, CAR, ALARM).</p>
+	<p>You are given the first and last word in the chain, and your goal is to then guess the four words that lead
+		the first word to the last.</p>
+	<p>You will start by getting the first letter of the second word in the chain,<br>then you must think of a word that
+		connects to the first in a two word phrase (e.g. SPACE SHUTTLE, SHUTTLE BUS).</p>
+	<p>If you guess correct, you will move to the next word until you reach the end.</p>
+	<p>If you guess wrong, you will receive another letter in the word to help with your guesses.</p>
+</div>
+<a href="{% url 'wordchain:play' %}">
+	<button class="button button4">Play</button>
+</a>
 {% endblock %}
-
-</html>

@@ -1,42 +1,30 @@
 {% extends 'wordchain_app/base.html' %}
 {% load static %}
-
-<!DOCTYPE html>
-<html lang="en">
+{% block content %}
 
 <head>
-    <title>Word Chain - Play</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'wordchain_app/mode.css' %}">
+	<title>Word Chain - Play</title>
 </head>
-
-
-<body>
-    {% block content %}
-    <div class="game-container" id="game">
-        <div class="score-container">
-            <p id="score">Score: 0</p>
-        </div>
-        <div class="modal" id="game-modal">
-            <div class="modal-content"></div>
-        </div>
-        <div class="tile-container"></div>
-    </div>
-    <div class="button-container">
-        <button class="button4 clear-and-check" style="margin:10px;" name="clear" id="clear">Clear</button>
-        <button class="button4 clear-and-check" style="margin:10px;" name="check" id="check">Check</button>
-    </div>
-    <p id="chain-id" hidden>{{ chain_id }}</p>
-    <p id="first-word" hidden>{{ first_word }}</p>
-    <p id="second-word" hidden>{{ second_word }}</p>
-    <p id="third-word" hidden>{{ third_word }}</p>
-    <p id="fourth-word" hidden>{{ fourth_word }}</p>
-    <p id="fifth-word" hidden>{{ fifth_word }}</p>
-    <p id="sixth-word" hidden>{{ sixth_word }}</p>
-    <p id="level" hidden>{{ level }}</p>
-    <script type="text/javascript" src="{% static 'wordchain_app/game.js' %}"></script>
-    {% endblock %}
-</body> 
-
-
-</html>
+<div class="game-container" id="game">
+	<div class="score-container">
+		<p id="score">Score: 0</p>
+	</div>
+	<div class="modal" id="game-modal">
+		<div class="modal-content"></div>
+	</div>
+	<div class="tile-container"></div>
+</div>
+<div class="button-container">
+	<button class="button4 clear-and-check" style="margin:10px;" name="clear" id="clear">Clear</button>
+	<button class="button4 clear-and-check" style="margin:10px;" name="check" id="check">Check</button>
+</div>
+<p id="chain-id" hidden>{{ chain_id }}</p>
+<p id="first-word" hidden>{{ first_word }}</p>
+<p id="second-word" hidden>{{ second_word }}</p>
+<p id="third-word" hidden>{{ third_word }}</p>
+<p id="fourth-word" hidden>{{ fourth_word }}</p>
+<p id="fifth-word" hidden>{{ fifth_word }}</p>
+<p id="sixth-word" hidden>{{ sixth_word }}</p>
+<p id="level" hidden>{{ level }}</p>
+<script type="text/javascript" src="{% static 'wordchain_app/game.js' %}"></script>
+{% endblock %}
