@@ -4,8 +4,6 @@ from django.shortcuts import render,redirect
 
 from .forms import UserForm
 from .models import *
-from django.contrib.auth.models import User
-from django.db.models import Max, Avg
 import json
 
 @login_required
@@ -86,10 +84,6 @@ def sign_up(request):
     else:
         form = UserForm()
     return render(request, "registration/sign_up.html", {'form': form})
-
-
-def password_reset(request):
-    return render(request, "wordchain_app/password_reset.html")
 
 
 @login_required
