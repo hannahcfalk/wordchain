@@ -18,34 +18,6 @@ def play(request):
         Results.objects.create(chain=chain, score=score)
         PlayGame.objects.create(chain=chain, user=request.user)
 
-    if not SetView.objects.filter(user=request.user).exists():
-        display_name, created = Display.objects.get_or_create(display_id=1, accessibility="Normal", visual_mode="Dark")
-        display = SetView.objects.create(user=request.user, display=display_name)
-        font = display_name.accessibility
-        mode = display_name.visual_mode
-    else:
-        display = SetView.objects.get(user=request.user)
-        display_name = display.display
-        font = display_name.accessibility
-        mode = display_name.visual_mode
-
-    if (mode == "Dark" and font == "Normal"):
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }#game { color: #ffffff; } label { color: #ffffff; }""")
-        file.close()
-    elif (mode == "Light" and font == "Normal"):
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }#game { color: #000000; } label { color: #000000; }""")
-        file.close()
-    elif (mode == "Dark" and font == "Bigger"):
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }#game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
-        file.close()
-    else:
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }#game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
-        file.close()
-
     chain = Chain.objects.order_by('?').first()
     if (Chain.objects.count() <= PlayGame.objects.filter(user_id=request.user.id).count()) or (chain is None):
         return render(request, "wordchain_app/play-no-chains.html")
@@ -57,6 +29,7 @@ def play(request):
     level = isassignto.level.difficulty
     context = {
         "level": level,
+        "style": set_style(request.user),
     }
     context.update(chain.__dict__)
     return render(request, "wordchain_app/play.html", context)
@@ -64,7 +37,7 @@ def play(request):
 
 @login_required
 def about(request):
-    return render(request, "wordchain_app/about.html")
+    return render(request, "wordchain_app/about.html", {"style": set_style(request.user)})
 
 
 def sign_up(request):
@@ -87,7 +60,7 @@ def update_account_details(request):
             return redirect('wordchain:play')
     else:
         form = UserForm(instance=request.user)
-    return render(request, "wordchain_app/update_account_details.html", {'form': form})
+    return render(request, "wordchain_app/update_account_details.html", {'form': form, "style": set_style(request.user)})
 
 
 @login_required
@@ -118,29 +91,13 @@ def account(request):
         display_view.display = Display.objects.get(accessibility=font, visual_mode=mode)
         display_view.save()
 
-    if (mode == "Dark" and font == "Normal"):
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }#game { color: #ffffff; } label { color: #ffffff; }""")
-        file.close()
-    elif (mode == "Light" and font == "Normal"):
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }#game { color: #000000; } label { color: #000000; }""")
-        file.close()
-    elif (mode == "Dark" and font == "Bigger"):
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #121213; }#game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
-        file.close()
-    else:
-        file = open("wordchain_app/static/wordchain_app/mode.css", "wt")
-        file.write("""#body { background-color: #ffffff; }#game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }""")
-        file.close()
-
     context = {
         "user": user,
         "first_name": first_name,
         "last_name": last_name,
         "font": font,
-        "mode": mode
+        "mode": mode,
+        "style": set_style(request.user),
     }
 
     return render(request, "wordchain_app/account.html", context)
@@ -169,7 +126,8 @@ def stats(request):
         "average_score_level2": average_score_level2,
         "average_score_level3": average_score_level3,
         "all_scores": all_scores,
-        "download": download
+        "download": download,
+        "style": set_style(request.user)
     }
     return render(request, "wordchain_app/stats.html", context)
 
@@ -241,3 +199,27 @@ def create_download(highest_score_level1, highest_score_level2, highest_score_le
         download['All Scores'].append(s)
     download = json.dumps(download)
     return download
+
+
+def set_style(user):
+    if not SetView.objects.filter(user=user).exists():
+        display_name, created = Display.objects.get_or_create(display_id=1, accessibility="Normal", visual_mode="Dark")
+        display = SetView.objects.create(user=user, display=display_name)
+        font = display_name.accessibility
+        mode = display_name.visual_mode
+    else:
+        display = SetView.objects.get(user=user)
+        display_name = display.display
+        font = display_name.accessibility
+        mode = display_name.visual_mode
+
+    if (mode == "Dark" and font == "Normal"):
+        style = "#body { background-color: #121213; }#game { color: #ffffff; } label { color: #ffffff; }"
+    elif (mode == "Light" and font == "Normal"):
+        style = "#body { background-color: #ffffff; }#game { color: #000000; } label { color: #000000; }"
+    elif (mode == "Dark" and font == "Bigger"):
+        style = "#body { background-color: #121213; }#game { color: #ffffff; font-size: 40px; } label { color: #ffffff; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }"
+    else:
+        style = "#body { background-color: #ffffff; }#game { color: #000000; font-size: 40px; } label { color: #000000; } .navbar { font-size: 30px; } .button4 { font-size: 25px; height: 65px; }"
+
+    return style
