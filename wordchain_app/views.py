@@ -20,7 +20,7 @@ def play(request):
 
     chain = Chain.objects.order_by('?').first()
     if (Chain.objects.count() <= PlayGame.objects.filter(user_id=request.user.id).count()) or (chain is None):
-        return render(request, "wordchain_app/play-no-chains.html")
+        return render(request, "wordchain_app/play-no-chains.html", {"style": set_style(request.user)})
     while PlayGame.objects.filter(chain=chain, user_id=request.user.id).exists():
         chain = Chain.objects.order_by('?').first()
 
